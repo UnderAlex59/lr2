@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.zverev.lr2.exception.UnsupportedCodeException;
 import ru.zverev.lr2.exception.ValidationFailedException;
 import ru.zverev.lr2.model.*;
+import ru.zverev.lr2.service.ModifyRequestService;
 import ru.zverev.lr2.service.ModifyResponseService;
 import ru.zverev.lr2.service.ValidationService;
 
@@ -24,12 +25,17 @@ public class MyController {
 
     private final ModifyResponseService modifyResponseService;
 
+    private final ModifyRequestService modifyRequestService;
+
     @Autowired
     public MyController(
             ValidationService validationService,
-            @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService) {
+            @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
+            ModifyRequestService modifyRequestService
+    ) {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
+        this.modifyRequestService = modifyRequestService;
     }
 
     @PostMapping(value = "/feedback")
@@ -67,6 +73,8 @@ public class MyController {
             log.info("response: {}", response);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        modifyResponseService.modify(response);
+        modifyRequestService.modify(request);
+        return new ResponseEntity<>(modifyResponseService.modify(response), HttpStatus.OK);
     }
 }
