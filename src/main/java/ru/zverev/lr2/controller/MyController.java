@@ -14,6 +14,7 @@ import ru.zverev.lr2.exception.UnsupportedCodeException;
 import ru.zverev.lr2.exception.ValidationFailedException;
 import ru.zverev.lr2.model.*;
 import ru.zverev.lr2.service.ModifyResponseService;
+import ru.zverev.lr2.service.ProcessRequestService;
 import ru.zverev.lr2.service.ValidationService;
 
 @RestController
@@ -24,12 +25,16 @@ public class MyController {
 
     private final ModifyResponseService modifyResponseService;
 
+    private final ProcessRequestService processRequestService;
+
     @Autowired
     public MyController(
             ValidationService validationService,
-            @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService) {
+            @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
+            ProcessRequestService processRequestService) {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
+        this.processRequestService = processRequestService;
     }
 
     @PostMapping(value = "/feedback")
@@ -67,6 +72,7 @@ public class MyController {
             log.info("response: {}", response);
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        processRequestService.process(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
