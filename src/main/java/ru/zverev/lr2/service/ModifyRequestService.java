@@ -6,4 +6,6 @@ import ru.zverev.lr2.model.Request;
 @Service
 public interface ModifyRequestService {
     void modify(Request request);
+
+    int getOrder();
 }

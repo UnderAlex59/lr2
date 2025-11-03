@@ -18,11 +18,16 @@ public class ModifySystemNameRequestService implements ModifyRequestService
         HttpEntity<Request> requestEntity = new HttpEntity<>(request);
 
         new RestTemplate().exchange(
-                "http://localhost:8080/feedback",
+                "http://localhost:8082/feedback",
                 HttpMethod.POST,
                 requestEntity,
                 new ParameterizedTypeReference<Request>(){}
         );
 
+    }
+
+    @Override
+    public int getOrder() {
+        return 2;
     }
 }
