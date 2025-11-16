@@ -67,6 +67,10 @@ public class Request {
                 ", systemName=" + systemName + '\'' +
                 ", systemTime=" + systemTime + '\'' +
                 ", source=" + source + '\'' +
+                ", position" + position + '\'' +
+                ", salary" + salary + '\'' +
+                ", bonus" + bonus + '\'' +
+                ", work days" + workDays + '\'' +
                 ", communicationId=" + communicationId + '\'' +
                 ", templateId=" + templateId + '\'' +
                 ", productCode=" + productCode + '\'' +

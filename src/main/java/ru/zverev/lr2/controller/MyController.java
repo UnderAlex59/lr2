@@ -57,15 +57,16 @@ public class MyController {
                 request,
                 response
         );
-        log.info("response: {}", response);
 
-        modifyRequestService.modify(request);
+
+        //modifyRequestService.modify(request);
         response.setAnnualBonus(
                 DecimalRoundUtils.roundWithPrecision(
                         annualBonusService.calculate(request),
                         2
                 )
         );
+        log.info("response: {}", response);
         return responseEntity == null ?
                 new ResponseEntity<>(
                         modifyResponseService.modify(response),
