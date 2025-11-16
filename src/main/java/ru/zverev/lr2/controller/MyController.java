@@ -33,20 +33,16 @@ public class MyController {
 
     private final AnnualBonusService annualBonusService;
 
-    private final ResourceConfigCustomizer resourceConfigCustomizer;
-
     @Autowired
     public MyController(
             ValidationService validationService,
             @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
             ModifyRequestService modifyRequestService,
-            AnnualBonusService annualBonusService,
-            ResourceConfigCustomizer resourceConfigCustomizer) {
+            AnnualBonusService annualBonusService) {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
         this.modifyRequestService = modifyRequestService;
         this.annualBonusService = annualBonusService;
-        this.resourceConfigCustomizer = resourceConfigCustomizer;
     }
 
     @PostMapping(value = "/feedback")
@@ -70,7 +66,7 @@ public class MyController {
                         2
                 )
         );
-        return resourceConfigCustomizer == null ?
+        return responseEntity == null ?
                 new ResponseEntity<>(
                         modifyResponseService.modify(response),
                         HttpStatus.OK
