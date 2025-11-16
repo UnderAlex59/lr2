@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.zverev.lr2.exception.UnsupportedCodeException;
 import ru.zverev.lr2.exception.ValidationFailedException;
 import ru.zverev.lr2.model.*;
+import ru.zverev.lr2.service.AnnualBonusService;
 import ru.zverev.lr2.service.ModifyRequestService;
 import ru.zverev.lr2.service.ModifyResponseService;
 import ru.zverev.lr2.service.ValidationService;
+import ru.zverev.lr2.util.DecimalRoundUtils;
+import ru.zverev.lr2.util.ResponseUtils;
 
 @RestController
 @Slf4j
@@ -27,15 +30,18 @@ public class MyController {
 
     private final ModifyRequestService modifyRequestService;
 
+    private final AnnualBonusService annualBonusService;
     @Autowired
     public MyController(
             ValidationService validationService,
             @Qualifier("ModifySystemTimeResponseService") ModifyResponseService modifyResponseService,
-            ModifyRequestService modifyRequestService
+            ModifyRequestService modifyRequestService,
+            AnnualBonusService annualBonusService
     ) {
         this.validationService = validationService;
         this.modifyResponseService = modifyResponseService;
         this.modifyRequestService = modifyRequestService;
+        this.annualBonusService = annualBonusService;
     }
 
     @PostMapping(value = "/feedback")
@@ -43,14 +49,7 @@ public class MyController {
 
         log.info("request: {}", request);
 
-        Response response = Response.builder()
-                .uid(request.getUid())
-                .operationUid(request.getOperationUid())
-                .code(Codes.SUCCESS)
-                .errorCode(ErrorCodes.EMPTY)
-                .errorMessage(ErrorMessages.EMPTY)
-                .build();
-        modifyResponseService.modify(response);
+        Response response = ResponseUtils.getPrefillResponse(request);
         try {
             validationService.isValid(bindingResult, request);
         } catch (ValidationFailedException e) {
@@ -75,6 +74,7 @@ public class MyController {
         }
         modifyResponseService.modify(response);
         modifyRequestService.modify(request);
+        response.setAnnualBonus(DecimalRoundUtils.roundWithPrecision(annualBonusService.calculate(request), 2));
         return new ResponseEntity<>(modifyResponseService.modify(response), HttpStatus.OK);
     }
 }
